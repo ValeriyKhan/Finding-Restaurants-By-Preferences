@@ -45,7 +45,7 @@ public class JwtTokenVerifierFilter extends OncePerRequestFilter {
             List<Map<String, String>> authorities = (List<Map<String, String>>) claims.get("authorities");
             Set<SimpleGrantedAuthority> simpleGrantedAuthorities =
                     authorities.stream()
-                            .map(a -> new SimpleGrantedAuthority(a.get("authorities")))
+                            .map(a -> new SimpleGrantedAuthority(a.get("authority")))
                             .collect(Collectors.toSet());
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     username,

@@ -12,11 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import valeriy.khan.Finding.Restaurants.By.Preferences.messagesingleton.MessageSingleton;
 import valeriy.khan.Finding.Restaurants.By.Preferences.user.dto.ChangeAppUserRequest;
-import valeriy.khan.Finding.Restaurants.By.Preferences.user.dto.CreateAdminRequest;
 import valeriy.khan.Finding.Restaurants.By.Preferences.user.dto.CreateAppUserRequest;
-import valeriy.khan.Finding.Restaurants.By.Preferences.user.dto.CreateAppUserResponse;
-import valeriy.khan.Finding.Restaurants.By.Preferences.user.status.AppUserStatus;
-import valeriy.khan.Finding.Restaurants.By.Preferences.user.type.AppUserType;
+import valeriy.khan.Finding.Restaurants.By.Preferences.user.dto.GetUserResponse;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -38,6 +35,7 @@ public class AppUserService implements UserDetailsService {
 
     public ResponseEntity<?> getAllAppUsers(int page, int size) {
         Page<AppUser> appUserList = appUserRepository.findAll(PageRequest.of(page, size));
+
         return messageSingleton.ok(Map.of("users", appUserList));
     }
 
@@ -46,7 +44,18 @@ public class AppUserService implements UserDetailsService {
         if (appUserOptional.isEmpty()) {
             return messageSingleton.userDoesNotExist();
         }
-        return messageSingleton.ok(Map.of("user", appUserOptional.get()));
+        AppUser appUser = appUserOptional.get();
+        GetUserResponse getUserResponse = GetUserResponse.builder()
+                .id(appUser.getId())
+                .username(appUser.getUsername())
+                .firstName(appUser.getFirstName())
+                .lastName(appUser.getLastName())
+                .dateOfBirth(appUser.getDateOfBirth())
+                .phoneNumber(appUser.getPhoneNumber())
+                .role(appUser.getRole())
+                .type(appUser.getType())
+                .build();
+        return messageSingleton.ok(Map.of("user", getUserResponse));
     }
 
     public ResponseEntity<?> createAppUserByAdmin(CreateAppUserRequest createAppUserRequest) {
@@ -110,33 +119,5 @@ public class AppUserService implements UserDetailsService {
             throw new UsernameNotFoundException("User does not exist");
         }
         return appUserOptional.get();
-    }
-
-    public ResponseEntity<?> createAdmin(CreateAdminRequest createAdminRequest) {
-        Optional<AppUser> appUserOptional = appUserRepository.findByUsernameAndPhoneNumber(
-                createAdminRequest.getUsername(), createAdminRequest.getPhoneNumber());
-        if (appUserOptional.isPresent()) {
-            return messageSingleton.userIsExist();
-        }
-        AppUser appUser = AppUser.builder()
-                .username(createAdminRequest.getUsername())
-                .password(passwordEncoder.encode(createAdminRequest.getPassword()))
-                .firstName(createAdminRequest.getFirstName())
-                .lastName(createAdminRequest.getLastName())
-                .dateOfBirth(createAdminRequest.getDateOfBirth())
-                .phoneNumber(createAdminRequest.getPhoneNumber())
-                .type(AppUserType.STAFF)
-                .status(ACTIVE)
-                .role(ADMIN)
-                .build();
-        CreateAppUserResponse response = CreateAppUserResponse.builder()
-                .username(appUser.getUsername())
-                .firstName(appUser.getFirstName())
-                .lastName(appUser.getLastName())
-                .dateOfBirth(appUser.getDateOfBirth())
-                .phoneNumber(appUser.getPhoneNumber())
-                .build();
-        appUserRepository.save(appUser);
-        return messageSingleton.ok(Map.of("admin", response));
     }
 }

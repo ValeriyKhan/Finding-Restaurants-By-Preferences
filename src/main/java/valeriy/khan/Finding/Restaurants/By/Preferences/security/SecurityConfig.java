@@ -31,13 +31,12 @@ public class SecurityConfig {
                 .and()
                 .addFilterBefore(jwtTokenVerifierFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
+                .antMatchers("/**/auth/create-admin").denyAll()
                 .antMatchers("/**/login").permitAll()
                 .antMatchers("/**/register").permitAll()
-                .antMatchers("/**/user/getall",
-                                         "/**/user/get",
-                                         "/**/user/create").hasRole("MODERATOR")
-                .antMatchers("/**/user").hasRole("ADMIN")
-//                .antMatchers("/**/user/create-admin").denyAll()
+                .antMatchers(HttpMethod.GET, "/**/user/**").hasAuthority("user:read")
+                .antMatchers(HttpMethod.POST, "/**/user/**").hasAuthority("user:write")
+                .antMatchers(HttpMethod.DELETE,"/**/user/**").hasAuthority("user:delete")
                 .anyRequest()
                 .authenticated();
         return http.build();

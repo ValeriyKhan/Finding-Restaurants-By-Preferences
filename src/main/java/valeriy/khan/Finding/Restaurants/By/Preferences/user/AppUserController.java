@@ -1,18 +1,19 @@
 package valeriy.khan.Finding.Restaurants.By.Preferences.user;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import valeriy.khan.Finding.Restaurants.By.Preferences.user.dto.ChangeAppUserRequest;
-import valeriy.khan.Finding.Restaurants.By.Preferences.user.dto.CreateAdminRequest;
 import valeriy.khan.Finding.Restaurants.By.Preferences.user.dto.CreateAppUserRequest;
 
 
 @RestController
 @RequestMapping(path = "api/v1/user")
+@RequiredArgsConstructor
 public class AppUserController {
-    private AppUserService appUserService;
+    private final AppUserService appUserService;
 
-    @GetMapping("getall")
+    @GetMapping("get-all/")
     public ResponseEntity<?> getAllAppUsers(
             @RequestParam("page") int page,
             @RequestParam("size") int size
@@ -42,12 +43,5 @@ public class AppUserController {
     public ResponseEntity<?> deleteAppUser(
             @PathVariable("userId") Long userId) {
         return appUserService.deleteAppUser(userId);
-    }
-
-    @PostMapping("create-admin")
-    public ResponseEntity<?> createAdmin(
-            @RequestBody CreateAdminRequest createAdminRequest
-    ) {
-        return appUserService.createAdmin(createAdminRequest);
     }
 }

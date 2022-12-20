@@ -50,14 +50,6 @@ public class AppUser implements UserDetails {
     private AppUserStatus status;
     @Enumerated(STRING)
     private AppUserRole role;
-    @ManyToMany
-    private List<Preference> listOfPreferences;
-    @ManyToMany
-    private List<MerchantPlace> listOfMerchantPlaces;
-    @ManyToMany
-    private List<Rating> ratingList;
-    @OneToOne
-    private RefreshTokenEntity refreshToken;
 
     public boolean isBlocked() {
         return this.status.equals(BLOCKED);

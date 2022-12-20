@@ -25,7 +25,5 @@ public class Preference {
     private String name;
     @ManyToMany
     private List<AppUser> appUserList;
-    @ManyToMany
-    private List<MerchantPlace> merchantPlaceList;
 
 }
