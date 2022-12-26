@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import restaurant.app.auth.dto.GenerateTokenRequest;
 import restaurant.app.user.dto.CreateAdminRequest;
 import restaurant.app.auth.dto.LoginRequest;
-import restaurant.app.user.dto.CreateAppUserRequest;
+import restaurant.app.user.dto.CreateUserRequest;
 
 import javax.validation.Valid;
 
@@ -22,9 +22,9 @@ public class AuthorizationController {
 
     @PostMapping("register")
     public ResponseEntity<?> registerNewAppUser(
-          @Valid @RequestBody CreateAppUserRequest createAppUserRequest
+          @Valid @RequestBody CreateUserRequest createUserRequest
     ) {
-        return authorizationService.registerAppUserByUser(createAppUserRequest);
+        return authorizationService.registerAppUserByUser(createUserRequest);
     }
 
     @PostMapping("login")

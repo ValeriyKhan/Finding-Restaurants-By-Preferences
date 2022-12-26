@@ -9,8 +9,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
-import restaurant.app.user.AppUser;
-import restaurant.app.user.AppUserRepository;
+import restaurant.app.user.User;
+import restaurant.app.user.UserRepository;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -19,7 +19,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthenticationConfig implements AuthenticationManager {
 
-    private final AppUserRepository appUserRepository;
+    private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
@@ -27,18 +27,18 @@ public class AuthenticationConfig implements AuthenticationManager {
         String username = authentication.getPrincipal() + "";
         String password = authentication.getCredentials() + "";
 
-        Optional<AppUser> optionalAppUser = appUserRepository.findByUsername(username);
+        Optional<User> optionalAppUser = userRepository.findByUsername(username);
         if (optionalAppUser.isEmpty()) {
             throw new BadCredentialsException("User does not exist");
         }
-        AppUser appUser = optionalAppUser.get();
-        if (appUser.isBlocked()) {
+        User user = optionalAppUser.get();
+        if (user.isBlocked()) {
             throw new BadCredentialsException("User is blocked");
         }
-        if (!passwordEncoder.matches(password, appUser.getPassword())) {
+        if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new BadCredentialsException("Password does not match");
         }
-        Collection<? extends GrantedAuthority> authorities = appUser.getAuthorities();
+        Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
         return new UsernamePasswordAuthenticationToken(
                 username,
                 null,

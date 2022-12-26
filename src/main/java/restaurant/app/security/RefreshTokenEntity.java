@@ -3,7 +3,7 @@ package restaurant.app.security;
 
 import lombok.Getter;
 import lombok.Setter;
-import restaurant.app.user.AppUser;
+import restaurant.app.user.User;
 
 import javax.persistence.*;
 
@@ -18,5 +18,5 @@ public class RefreshTokenEntity {
     @Column(length = 999)
     private String token;
     @OneToOne
-    private AppUser appUser;
+    private User user;
 }

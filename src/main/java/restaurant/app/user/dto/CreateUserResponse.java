@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 
 @AllArgsConstructor
 @Builder
-public class CreateAppUserResponse {
+public class CreateUserResponse {
     public String username;
     public String firstName;
     public String lastName;

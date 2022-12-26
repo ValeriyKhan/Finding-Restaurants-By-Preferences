@@ -1,4 +1,4 @@
-package restaurant.app.property;
+package restaurant.app.security.property;
 
 import io.jsonwebtoken.security.Keys;
 import org.springframework.boot.context.properties.ConfigurationProperties;

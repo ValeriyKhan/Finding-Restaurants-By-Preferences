@@ -1,5 +1,5 @@
 package restaurant.app.user.type;
 
-public enum AppUserType {
+public enum UserType {
     STAFF, CUSTOMER, MERCHANT
 }
