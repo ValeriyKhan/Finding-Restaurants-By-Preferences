@@ -4,9 +4,12 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import restaurant.app.role.AppUserRole;
-import restaurant.app.user.status.AppUserStatus;
-import restaurant.app.user.type.AppUserType;
+import restaurant.app.merchantPlace.MerchantPlace;
+import restaurant.app.preference.Preference;
+import restaurant.app.rating.Rating;
+import restaurant.app.role.UserRole;
+import restaurant.app.user.status.UserStatus;
+import restaurant.app.user.type.UserType;
 
 import javax.persistence.*;
 
@@ -16,7 +19,7 @@ import java.util.stream.Collectors;
 
 import static javax.persistence.EnumType.*;
 import static javax.persistence.GenerationType.*;
-import static restaurant.app.user.status.AppUserStatus.*;
+import static restaurant.app.user.status.UserStatus.*;
 
 @Table(name = "user")
 @Entity
@@ -25,7 +28,7 @@ import static restaurant.app.user.status.AppUserStatus.*;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class AppUser implements UserDetails {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "user_id")
@@ -41,11 +44,17 @@ public class AppUser implements UserDetails {
     private String phoneNumber;
     @Column(nullable = false)
     @Enumerated(STRING)
-    private AppUserType type;
+    private UserType type;
     @Enumerated(STRING)
-    private AppUserStatus status;
+    private UserStatus status;
     @Enumerated(STRING)
-    private AppUserRole role;
+    private UserRole role;
+    @ManyToMany(fetch = FetchType.LAZY)
+    private List<Preference> preferenceList;
+    @ManyToMany(fetch = FetchType.LAZY)
+    private List<Rating> ratingList;
+    @ManyToMany(fetch = FetchType.LAZY)
+    private List<MerchantPlace> merchantPlaceList;
 
     public boolean isBlocked() {
         return this.status.equals(BLOCKED);
@@ -53,7 +62,7 @@ public class AppUser implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return role.getAppUserPermissionSet().stream()
+        return role.getUserPermissionSet().stream()
                 .map(appUserPermission -> new SimpleGrantedAuthority(appUserPermission.getAuthority()))
                 .collect(Collectors.toSet());
     }

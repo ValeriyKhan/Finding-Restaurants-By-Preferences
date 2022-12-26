@@ -3,7 +3,7 @@ package restaurant.app.preference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import restaurant.app.user.AppUser;
+import restaurant.app.user.User;
 
 import javax.persistence.*;
 
@@ -22,7 +22,7 @@ public class Preference {
     private Long id;
     @Column(unique = true, name = "preference_name")
     private String name;
-    @ManyToMany
-    private List<AppUser> appUserList;
+    @ManyToMany(fetch = FetchType.LAZY)
+    private List<User> userList;
 
 }

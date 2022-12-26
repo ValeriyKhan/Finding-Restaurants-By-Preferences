@@ -6,14 +6,36 @@ import lombok.Getter;
 import java.util.Set;
 
 @Getter
-public enum AppUserRole {
+public enum UserRole {
     USER(Sets.newHashSet()),
-    ADMIN(Sets.newHashSet(AppUserPermission.USER_READ, AppUserPermission.USER_WRITE, AppUserPermission.USER_CHANGE, AppUserPermission.USER_DELETE)),
-    MODERATOR(Sets.newHashSet(AppUserPermission.USER_READ, AppUserPermission.USER_WRITE, AppUserPermission.USER_CHANGE));
-    private final Set<AppUserPermission> appUserPermissionSet;
 
-    AppUserRole(Set<AppUserPermission> appUserPermissionSet) {
-        this.appUserPermissionSet = appUserPermissionSet;
+    MERCHANT_OWNER(Sets.newHashSet(
+            UserPermission.MERCHANT_READ,
+            UserPermission.MERCHANT_WRITE,
+            UserPermission.MERCHANT_CHANGE
+    )),
+    ADMIN(Sets.newHashSet(
+            UserPermission.USER_READ,
+            UserPermission.USER_WRITE,
+            UserPermission.USER_CHANGE,
+            UserPermission.USER_DELETE,
+            UserPermission.MERCHANT_READ,
+            UserPermission.MERCHANT_WRITE,
+            UserPermission.MERCHANT_CHANGE,
+            UserPermission.MERCHANT_DELETE
+    )),
+    MODERATOR(Sets.newHashSet(
+            UserPermission.USER_READ,
+            UserPermission.USER_WRITE,
+            UserPermission.USER_CHANGE,
+            UserPermission.MERCHANT_READ,
+            UserPermission.MERCHANT_WRITE,
+            UserPermission.MERCHANT_CHANGE
+    ));
+    private final Set<UserPermission> userPermissionSet;
+
+    UserRole(Set<UserPermission> userPermissionSet) {
+        this.userPermissionSet = userPermissionSet;
     }
 
 }

@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 @Validated
 @Getter
 @Setter
-public class CreateAppUserRequest {
+public class CreateUserRequest {
     @Size(min = 5, message = "Username should be longer than 5 symbols")
     @NotNull(message = "Username should not be empty")
     private String username;

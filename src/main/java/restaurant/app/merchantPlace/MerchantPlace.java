@@ -1,9 +1,9 @@
 package restaurant.app.merchantPlace;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import restaurant.app.preference.Preference;
-import restaurant.app.user.AppUser;
+import restaurant.app.rating.Rating;
+import restaurant.app.user.User;
 
 import javax.persistence.*;
 import java.util.List;
@@ -12,17 +12,30 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class MerchantPlace {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    private Long rating;
+    private Long overallRating;
+    @Column(unique = true)
+    private String merchantName;
     @OneToOne
-    private AppUser MerchantPlaceOwner;
-    @ManyToMany
-    private List<Preference> ListOfPreferences;
-    @ManyToMany
-    private List<AppUser> appUserList;
+    private User merchantPlaceOwner;
+    @ManyToMany(fetch = FetchType.LAZY)
+    private List<Preference> preferences;
+    @ManyToMany(fetch = FetchType.LAZY)
+    private List<User> userList;
+    @ManyToMany(fetch = FetchType.LAZY)
+    private List<Rating> ratingList;
+    private String address;
+    private String latitude;
+    private String longitude;
 
+    public void calculateOverallRating() {
+        this.overallRating = (this.ratingList.stream().mapToLong(Rating::getStars).sum()) / this.ratingList.size();
+    }
 }

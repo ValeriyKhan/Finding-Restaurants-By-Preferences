@@ -17,27 +17,28 @@ import restaurant.app.messagesingleton.MessageSingleton;
 import restaurant.app.security.RefreshTokenEntity;
 import restaurant.app.security.jwt.JwtUtils;
 import restaurant.app.security.repository.RefreshTokenRepository;
-import restaurant.app.user.AppUser;
-import restaurant.app.user.AppUserRepository;
+import restaurant.app.threadLocalSingleton.ThreadLocalSingleton;
+import restaurant.app.user.User;
+import restaurant.app.user.UserRepository;
 import restaurant.app.user.dto.CreateAdminRequest;
 import restaurant.app.auth.dto.LoginRequest;
-import restaurant.app.user.dto.CreateAppUserRequest;
-import restaurant.app.user.dto.CreateAppUserResponse;
-import restaurant.app.user.status.AppUserStatus;
-import restaurant.app.user.type.AppUserType;
+import restaurant.app.user.dto.CreateUserRequest;
+import restaurant.app.user.dto.CreateUserResponse;
+import restaurant.app.user.status.UserStatus;
+import restaurant.app.user.type.UserType;
 
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-import static restaurant.app.role.AppUserRole.ADMIN;
-import static restaurant.app.user.status.AppUserStatus.ACTIVE;
+import static restaurant.app.role.UserRole.ADMIN;
+import static restaurant.app.user.status.UserStatus.ACTIVE;
 
 @Service
 @RequiredArgsConstructor
 public class AuthorizationService {
-    private final AppUserRepository appUserRepository;
+    private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final MessageSingleton messageSingleton;
     private final BCryptPasswordEncoder passwordEncoder;
@@ -46,34 +47,34 @@ public class AuthorizationService {
     private final JwtUtils jwtUtils;
 
 
-    public ResponseEntity<?> registerAppUserByUser(CreateAppUserRequest createAppUserRequest) {
-        Optional<AppUser> appUserOptional = appUserRepository.findByUsernameAndPhoneNumber(
-                createAppUserRequest.getUsername(), createAppUserRequest.getPhoneNumber());
+    public ResponseEntity<?> registerAppUserByUser(CreateUserRequest createUserRequest) {
+        Optional<User> appUserOptional = userRepository.findByUsernameAndPhoneNumber(
+                createUserRequest.getUsername(), createUserRequest.getPhoneNumber());
         if (appUserOptional.isPresent()) {
             return messageSingleton.userIsExist();
         }
-        if (Objects.equals(createAppUserRequest.getRole(), ADMIN)) {
+        if (Objects.equals(createUserRequest.getRole(), ADMIN)) {
             return messageSingleton.failedCreatingAUser();
         }
 
-        AppUser appUser = AppUser.builder()
-                .username(createAppUserRequest.getUsername())
-                .password(passwordEncoder.encode(createAppUserRequest.getPassword()))
-                .firstName(createAppUserRequest.getFirstName())
-                .lastName(createAppUserRequest.getLastName())
-                .dateOfBirth(createAppUserRequest.getDateOfBirth())
-                .phoneNumber(createAppUserRequest.getPhoneNumber())
-                .type(createAppUserRequest.getType())
-                .status(AppUserStatus.ACTIVE)
-                .role(createAppUserRequest.getRole())
+        User user = User.builder()
+                .username(createUserRequest.getUsername())
+                .password(passwordEncoder.encode(createUserRequest.getPassword()))
+                .firstName(createUserRequest.getFirstName())
+                .lastName(createUserRequest.getLastName())
+                .dateOfBirth(createUserRequest.getDateOfBirth())
+                .phoneNumber(createUserRequest.getPhoneNumber())
+                .type(createUserRequest.getType())
+                .status(UserStatus.ACTIVE)
+                .role(createUserRequest.getRole())
                 .build();
-        appUser = appUserRepository.save(appUser);
-        CreateAppUserResponse response = CreateAppUserResponse.builder()
-                .username(appUser.getUsername())
-                .firstName(appUser.getFirstName())
-                .lastName(appUser.getLastName())
-                .dateOfBirth(appUser.getDateOfBirth())
-                .phoneNumber(appUser.getPhoneNumber())
+        user = userRepository.save(user);
+        CreateUserResponse response = CreateUserResponse.builder()
+                .username(user.getUsername())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .dateOfBirth(user.getDateOfBirth())
+                .phoneNumber(user.getPhoneNumber())
                 .build();
         return messageSingleton.ok(Map.of("user", response));
     }
@@ -91,12 +92,12 @@ public class AuthorizationService {
                 String salt = generateSalt();
                 String accessToken = jwtUtils.generateToken(appUserDetails, salt);
                 String refreshToken = jwtUtils.generateToken(appUserDetails, salt);
-                Optional<AppUser> optionalAppUser = appUserRepository.findByUsername(appUserDetails.getUsername());
-                AppUser appUser = optionalAppUser.get();
-                appUser.setSalt(salt);
-                refreshTokenEntity.setAppUser(appUser);
+                Optional<User> optionalAppUser = userRepository.findByUsername(appUserDetails.getUsername());
+                User user = optionalAppUser.get();
+                user.setSalt(salt);
+                refreshTokenEntity.setUser(user);
                 refreshTokenEntity.setToken(refreshToken);
-                appUserRepository.save(appUser);
+                userRepository.save(user);
                 refreshTokenRepository.save(refreshTokenEntity);
                 return messageSingleton.ok(Map.of(
                         "accessToken", accessToken,
@@ -118,13 +119,13 @@ public class AuthorizationService {
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         String salt = generateSalt();
         String newAccessToken = jwtUtils.generateToken(userDetails, claims, salt);
-        Optional<AppUser> appUserOptional = appUserRepository.findByUsername(username);
+        Optional<User> appUserOptional = userRepository.findByUsername(username);
         if (appUserOptional.isEmpty()) {
             return messageSingleton.userDoesNotExist();
         }
-        AppUser appUser = appUserOptional.get();
-        appUser.setSalt(salt);
-        appUserRepository.save(appUser);
+        User user = appUserOptional.get();
+        user.setSalt(salt);
+        userRepository.save(user);
         return messageSingleton.ok(Map.of("accessToken", newAccessToken));
     }
 
@@ -136,13 +137,13 @@ public class AuthorizationService {
         String salt = generateSalt();
         String newAccessToken = jwtUtils.generateToken(userDetails, claims, salt);
         String newRefreshToken = jwtUtils.generateRefreshToken(userDetails, salt);
-        Optional<AppUser> appUserOptional = appUserRepository.findByUsername(username);
+        Optional<User> appUserOptional = userRepository.findByUsername(username);
         if (appUserOptional.isEmpty()) {
             return messageSingleton.userDoesNotExist();
         }
-        AppUser appUser = appUserOptional.get();
-        appUser.setSalt(salt);
-        appUserRepository.save(appUser);
+        User user = appUserOptional.get();
+        user.setSalt(salt);
+        userRepository.save(user);
 
         return messageSingleton.ok(Map.of(
                 "accessToken", newAccessToken,
@@ -151,30 +152,30 @@ public class AuthorizationService {
 
     public ResponseEntity<?> createAdmin(
             CreateAdminRequest createAdminRequest) {
-        Optional<AppUser> appUserOptional = appUserRepository.findByUsernameAndPhoneNumber(
+        Optional<User> appUserOptional = userRepository.findByUsernameAndPhoneNumber(
                 createAdminRequest.getUsername(), createAdminRequest.getPhoneNumber());
         if (appUserOptional.isPresent()) {
             return messageSingleton.userIsExist();
         }
-        AppUser appUser = AppUser.builder()
+        User user = User.builder()
                 .username(createAdminRequest.getUsername())
                 .password(passwordEncoder.encode(createAdminRequest.getPassword()))
                 .firstName(createAdminRequest.getFirstName())
                 .lastName(createAdminRequest.getLastName())
                 .dateOfBirth(createAdminRequest.getDateOfBirth())
                 .phoneNumber(createAdminRequest.getPhoneNumber())
-                .type(AppUserType.STAFF)
+                .type(UserType.STAFF)
                 .status(ACTIVE)
                 .role(ADMIN)
                 .build();
-        CreateAppUserResponse response = CreateAppUserResponse.builder()
-                .username(appUser.getUsername())
-                .firstName(appUser.getFirstName())
-                .lastName(appUser.getLastName())
-                .dateOfBirth(appUser.getDateOfBirth())
-                .phoneNumber(appUser.getPhoneNumber())
+        CreateUserResponse response = CreateUserResponse.builder()
+                .username(user.getUsername())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .dateOfBirth(user.getDateOfBirth())
+                .phoneNumber(user.getPhoneNumber())
                 .build();
-        appUserRepository.save(appUser);
+        userRepository.save(user);
         return messageSingleton.ok(Map.of("admin", response));
     }
 

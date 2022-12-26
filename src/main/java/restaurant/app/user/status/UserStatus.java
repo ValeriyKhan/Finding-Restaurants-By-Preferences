@@ -1,5 +1,5 @@
 package restaurant.app.user.status;
 
-public enum AppUserStatus {
+public enum UserStatus {
     BLOCKED, ACTIVE, DELETED
 }

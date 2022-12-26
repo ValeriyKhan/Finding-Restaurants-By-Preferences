@@ -27,12 +27,16 @@ public class SecurityConfig {
                 .and()
                 .addFilterBefore(jwtTokenVerifierFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers("/**/auth/create-admin").denyAll()
+                .antMatchers("/**/auth/create-admin").permitAll()
                 .antMatchers("/**/login").permitAll()
                 .antMatchers("/**/register").permitAll()
                 .antMatchers(HttpMethod.GET, "/**/user/**").hasAuthority("user:read")
                 .antMatchers(HttpMethod.POST, "/**/user/**").hasAuthority("user:write")
                 .antMatchers(HttpMethod.DELETE,"/**/user/**").hasAuthority("user:delete")
+                .antMatchers(HttpMethod.GET, "/**/merchant-place/**").hasAuthority("merchant:read")
+                .antMatchers(HttpMethod.PUT, "/**/merchant-place/**").hasAuthority("merchant:write")
+                .antMatchers(HttpMethod.POST, "/**/merchant-place/**").hasAuthority("merchant:write")
+                .antMatchers(HttpMethod.DELETE, "/**/merchant-place/**").hasAuthority("merchant:delete")
                 .anyRequest()
                 .authenticated();
         return http.build();

@@ -48,4 +48,12 @@ public class MessageSingleton {
     public ResponseEntity<?> failedCreatingAUser() {
         return new ResponseEntity<>(Map.of("error", "Trying create an admin. Permission denied"), FORBIDDEN);
     }
+
+    public ResponseEntity<?> merchantNotFound() {
+        return new ResponseEntity<>(Map.of("error", "Merchant not found"), BAD_REQUEST);
+    }
+
+    public ResponseEntity<?> merchantAlreadyExists() {
+        return new ResponseEntity<>(Map.of("error", "Merchant already exists"), BAD_REQUEST);
+    }
 }

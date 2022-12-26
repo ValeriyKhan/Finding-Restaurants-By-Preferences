@@ -27,24 +27,24 @@ import static restaurant.app.user.status.UserStatus.*;
 @Service
 @RequiredArgsConstructor
 @Validated
-public class AppUserService implements UserDetailsService {
+public class UserService implements UserDetailsService {
 
-    private final AppUserRepository appUserRepository;
+    private final UserRepository userRepository;
     private final MessageSingleton messageSingleton;
     private final BCryptPasswordEncoder passwordEncoder;
 
     public ResponseEntity<?> getAllUsers(int page, int size) {
-        Page<User> appUserList = appUserRepository.findAll(PageRequest.of(page, size));
+        Page<User> userList = userRepository.findAll(PageRequest.of(page, size));
 
-        return messageSingleton.ok(Map.of("users", appUserList));
+        return messageSingleton.ok(Map.of("users", userList));
     }
 
-    public ResponseEntity<?> getUser(Long appUserId) {
-        Optional<User> appUserOptional = appUserRepository.findById(appUserId);
-        if (appUserOptional.isEmpty()) {
+    public ResponseEntity<?> getUser(Long userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isEmpty()) {
             return messageSingleton.userDoesNotExist();
         }
-        User user = appUserOptional.get();
+        User user = userOptional.get();
         GetUserResponse getUserResponse = GetUserResponse.builder()
                 .id(user.getId())
                 .username(user.getUsername())
@@ -59,9 +59,9 @@ public class AppUserService implements UserDetailsService {
     }
 
     public ResponseEntity<?> createUserByAdmin(CreateUserRequest createUserRequest) {
-        Optional<User> appUserOptional = appUserRepository.findByUsernameAndPhoneNumber(
+        Optional<User> userOptional = userRepository.findByUsernameAndPhoneNumber(
                 createUserRequest.getUsername(), createUserRequest.getPhoneNumber());
-        if (appUserOptional.isPresent()) {
+        if (userOptional.isPresent()) {
             return messageSingleton.userIsExist();
         }
         if (Objects.equals(createUserRequest.getRole(), ADMIN)) {
@@ -78,17 +78,17 @@ public class AppUserService implements UserDetailsService {
                 .status(ACTIVE)
                 .role(createUserRequest.getRole())
                 .build();
-        appUserRepository.save(user);
+        userRepository.save(user);
         return messageSingleton.ok(Map.of("user", user));
     }
 
     public ResponseEntity<?> changeUser(@NotNull Long userId,
                                         @Valid ChangeUserRequest changeUserRequest) {
-        Optional<User> optionalAppUser = appUserRepository.findById(userId);
-        if (optionalAppUser.isEmpty()) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
             return messageSingleton.userDoesNotExist();
         }
-        User newUser = optionalAppUser.get();
+        User newUser = optionalUser.get();
         newUser.setUsername(changeUserRequest.getUsername());
         newUser.setPassword(passwordEncoder.encode(changeUserRequest.getPassword()));
         newUser.setFirstName(changeUserRequest.getFirstName());
@@ -97,27 +97,27 @@ public class AppUserService implements UserDetailsService {
         newUser.setPhoneNumber(changeUserRequest.getPhoneNumber());
         newUser.setType(changeUserRequest.getType());
         newUser.setStatus(changeUserRequest.getStatus());
-        appUserRepository.save(newUser);
+        userRepository.save(newUser);
         return messageSingleton.ok(Map.of("user", newUser));
     }
 
     public ResponseEntity<?> deleteUser(Long userId) {
-        Optional<User> optionalAppUser = appUserRepository.findById(userId);
-        if (optionalAppUser.isEmpty()) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
             return messageSingleton.userDoesNotExist();
         }
-        User user = optionalAppUser.get();
+        User user = optionalUser.get();
         user.setStatus(DELETED);
-        appUserRepository.save(user);
+        userRepository.save(user);
         return messageSingleton.ok(Map.of("message", "User with ID " + user.getId() + " deleted"));
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> appUserOptional = appUserRepository.findByUsername(username);
-        if (appUserOptional.isEmpty()) {
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if (userOptional.isEmpty()) {
             throw new UsernameNotFoundException("User does not exist");
         }
-        return appUserOptional.get();
+        return userOptional.get();
     }
 }

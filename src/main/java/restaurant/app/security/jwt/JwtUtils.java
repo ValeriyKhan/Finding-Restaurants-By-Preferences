@@ -5,7 +5,7 @@ import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import restaurant.app.property.SecurityPropertyConfiguration;
+import restaurant.app.security.property.SecurityPropertyConfiguration;
 
 import java.util.Date;
 import java.util.HashMap;

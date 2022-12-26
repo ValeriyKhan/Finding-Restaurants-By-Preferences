@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 @Validated
 @Getter
 @Setter
-public class ChangeAppUserRequest {
+public class ChangeUserRequest {
     @Min(value = 5, message = "Username should be longer than 5 symbols")
     private String username;
     @Min(value = 8, message = "Password should be longer than 8 symbols")
