@@ -3,8 +3,8 @@ package restaurant.app.user.dto;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.validation.annotation.Validated;
-import restaurant.app.role.AppUserRole;
-import restaurant.app.user.type.AppUserType;
+import restaurant.app.role.UserRole;
+import restaurant.app.user.type.UserType;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -31,7 +31,7 @@ public class CreateAppUserRequest {
     @Min(value = 8, message = "Phone should be longer than 8 symbols")
     private String phoneNumber;
     @NotNull(message = "Field should not be empty")
-    private AppUserType type;
+    private UserType type;
     @NotNull(message = "Field should not be empty")
-    private AppUserRole role;
+    private UserRole role;
 }
