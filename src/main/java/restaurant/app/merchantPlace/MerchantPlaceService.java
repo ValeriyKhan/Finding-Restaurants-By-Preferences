@@ -8,16 +8,19 @@ import org.springframework.stereotype.Service;
 import restaurant.app.merchantPlace.dto.ChangeMerchantPlace;
 import restaurant.app.merchantPlace.dto.CreateMerchantPlaceRequest;
 import restaurant.app.merchantPlace.dto.CreateMerchantPlaceResponse;
+import restaurant.app.merchantPlace.dto.SetPreferencesToMerchantPlaceRequest;
 import restaurant.app.messagesingleton.MessageSingleton;
+import restaurant.app.preference.Preference;
+import restaurant.app.preference.PreferenceRepository;
 import restaurant.app.threadLocalSingleton.ThreadLocalSingleton;
 
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class MerchantPlaceService {
     private final MerchantPlaceRepository merchantPlaceRepository;
+    private final PreferenceRepository preferenceRepository;
     private final MessageSingleton messageSingleton;
 
     public ResponseEntity<?> createMerchantPlace(CreateMerchantPlaceRequest createMerchantPlaceRequest) {
@@ -29,15 +32,13 @@ public class MerchantPlaceService {
         MerchantPlace merchantPlace = MerchantPlace.builder()
                 .merchantName(createMerchantPlaceRequest.getMerchantName())
                 .merchantPlaceOwner(ThreadLocalSingleton.getUser())
-                .preferences(createMerchantPlaceRequest.getPreferences())
                 .address(createMerchantPlaceRequest.getAddress())
                 .build();
         merchantPlaceRepository.save(merchantPlace);
         CreateMerchantPlaceResponse response = CreateMerchantPlaceResponse.builder()
                 .id(merchantPlace.getId())
                 .merchantName(createMerchantPlaceRequest.getMerchantName())
-                .merchantPlaceOwner(ThreadLocalSingleton.getUser())
-                .preferences(createMerchantPlaceRequest.getPreferences())
+                .merchantPlaceOwner(ThreadLocalSingleton.getUser().getUsername())
                 .address(createMerchantPlaceRequest.getAddress())
                 .build();
         return messageSingleton.ok(Map.of("merchantPlace", response));
@@ -52,9 +53,9 @@ public class MerchantPlaceService {
         CreateMerchantPlaceResponse response = CreateMerchantPlaceResponse.builder()
                 .id(merchantPlace.getId())
                 .merchantName(merchantPlace.getMerchantName())
-                .merchantPlaceOwner(ThreadLocalSingleton.getUser())
-                .preferences(merchantPlace.getPreferences())
+                .merchantPlaceOwner(ThreadLocalSingleton.getUser().getUsername())
                 .address(merchantPlace.getAddress())
+                .preferences(merchantPlace.getPreferences())
                 .build();
         return messageSingleton.ok(Map.of("MerchantPlace", response));
     }
@@ -75,5 +76,31 @@ public class MerchantPlaceService {
         merchantPlace.setAddress(changeMerchantPlace.getAddress());
         merchantPlaceRepository.save(merchantPlace);
         return messageSingleton.ok(Map.of("message: User changed", merchantPlace));
+    }
+
+    public ResponseEntity<?> setPreferencesToMerchantPlace(SetPreferencesToMerchantPlaceRequest setPreferencesToMerchantPlaceRequest) {
+        Optional<MerchantPlace> optionalMerchantPlace = merchantPlaceRepository
+                .findById(setPreferencesToMerchantPlaceRequest.getMerchantPlaceId());
+        if (optionalMerchantPlace.isEmpty()) {
+            return messageSingleton.merchantNotFound();
+        }
+        List<Preference> preferencesFromDB = preferenceRepository.findAll();
+        List<Preference> preferencesToSetToEntity = matchPreferences(setPreferencesToMerchantPlaceRequest.getPreferences(), preferencesFromDB);
+        MerchantPlace merchantPlace = optionalMerchantPlace.get();
+        merchantPlace.setPreferences(preferencesToSetToEntity);
+        merchantPlaceRepository.save(merchantPlace);
+        return messageSingleton.ok(Map.of("preferences", preferencesToSetToEntity));
+    }
+
+    private List<Preference> matchPreferences(List<Preference> preferencesFromRequest, List<Preference> preferencesFromDB) {
+        List<Preference> preferencesToResponse = new ArrayList<>();
+        for (Preference preferenceFromDB : preferencesFromDB) {
+            for (Preference preferenceFromRequest : preferencesFromRequest) {
+                if (Objects.equals(preferenceFromDB.getName(), preferenceFromRequest.getName())) {
+                    preferencesToResponse.add(preferenceFromDB);
+                }
+            }
+        }
+        return preferencesToResponse;
     }
 }

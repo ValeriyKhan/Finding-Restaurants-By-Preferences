@@ -17,7 +17,5 @@ public class CreateMerchantPlaceRequest {
     @Size(min = 1, max = 25)
     private String merchantName;
     @NotNull(message = "Cannot be empty")
-    private List<Preference> preferences;
-    @NotNull(message = "Cannot be empty")
     private String address;
 }

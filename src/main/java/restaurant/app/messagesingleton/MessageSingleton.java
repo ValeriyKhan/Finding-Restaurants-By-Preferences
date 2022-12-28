@@ -56,4 +56,12 @@ public class MessageSingleton {
     public ResponseEntity<?> merchantAlreadyExists() {
         return new ResponseEntity<>(Map.of("error", "Merchant already exists"), BAD_REQUEST);
     }
+
+    public ResponseEntity<?> preferenceAlreadyExists() {
+        return new ResponseEntity<>(Map.of("error", " Preference already exists"), BAD_REQUEST);
+    }
+
+    public ResponseEntity<?> preferenceNotFound() {
+        return new ResponseEntity<>(Map.of("error", " Some preferences not found in list"), BAD_REQUEST);
+    }
 }

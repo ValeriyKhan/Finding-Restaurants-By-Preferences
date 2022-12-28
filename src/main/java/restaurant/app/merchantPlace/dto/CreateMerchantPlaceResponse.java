@@ -7,9 +7,9 @@ import restaurant.app.user.User;
 import java.util.List;
 @Builder
 public class CreateMerchantPlaceResponse {
-    private Long id;
-    private String merchantName;
-    private User merchantPlaceOwner;
-    private List<Preference> preferences;
-    private String address;
+    public Long id;
+    public String merchantName;
+    public String merchantPlaceOwner;
+    public String address;
+    public List<Preference> preferences;
 }

@@ -37,6 +37,9 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.PUT, "/**/merchant-place/**").hasAuthority("merchant:write")
                 .antMatchers(HttpMethod.POST, "/**/merchant-place/**").hasAuthority("merchant:write")
                 .antMatchers(HttpMethod.DELETE, "/**/merchant-place/**").hasAuthority("merchant:delete")
+                .antMatchers(HttpMethod.POST, "/**/preference/**").hasAuthority("preference:write")
+                .antMatchers(HttpMethod.GET, "/**/preference/**").hasAuthority("preference:read")
+                .antMatchers(HttpMethod.DELETE, "/**/preference/**").hasAuthority("preference:delete")
                 .anyRequest()
                 .authenticated();
         return http.build();
