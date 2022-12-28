@@ -13,7 +13,10 @@ public enum UserPermission implements GrantedAuthority {
     MERCHANT_READ("merchant:read"),
     MERCHANT_WRITE("merchant:write"),
     MERCHANT_DELETE("merchant:delete"),
-    MERCHANT_CHANGE("merchant:change");
+    MERCHANT_CHANGE("merchant:change"),
+    PREFERENCE_WRITE("preference:write"),
+    PREFERENCE_READ("preference:read"),
+    PREFERENCE_DELETE("preference:delete");
 
     private final String permission;
 

@@ -1,28 +1,22 @@
 package restaurant.app.preference;
 
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import restaurant.app.user.User;
 
 import javax.persistence.*;
 
-import java.util.List;
-
-import static javax.persistence.GenerationType.*;
-
-@Table
-@Entity
 @Getter
 @Setter
-@NoArgsConstructor
+@Entity
+@Table
 public class Preference {
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
     @Id
-    @GeneratedValue(strategy = IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "id", nullable = false)
     private Long id;
-    @Column(unique = true, name = "preference_name")
+    @Column(unique = true)
     private String name;
-    @ManyToMany(fetch = FetchType.LAZY)
-    private List<User> userList;
-
 }

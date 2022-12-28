@@ -5,32 +5,38 @@ import lombok.Getter;
 
 import java.util.Set;
 
+import static restaurant.app.role.UserPermission.*;
+
 @Getter
 public enum UserRole {
     USER(Sets.newHashSet()),
 
     MERCHANT_OWNER(Sets.newHashSet(
-            UserPermission.MERCHANT_READ,
-            UserPermission.MERCHANT_WRITE,
-            UserPermission.MERCHANT_CHANGE
+            MERCHANT_READ,
+            MERCHANT_WRITE,
+            MERCHANT_CHANGE
     )),
     ADMIN(Sets.newHashSet(
-            UserPermission.USER_READ,
-            UserPermission.USER_WRITE,
-            UserPermission.USER_CHANGE,
-            UserPermission.USER_DELETE,
-            UserPermission.MERCHANT_READ,
-            UserPermission.MERCHANT_WRITE,
-            UserPermission.MERCHANT_CHANGE,
-            UserPermission.MERCHANT_DELETE
+            USER_READ,
+            USER_WRITE,
+            USER_CHANGE,
+            USER_DELETE,
+            MERCHANT_READ,
+            MERCHANT_WRITE,
+            MERCHANT_CHANGE,
+            MERCHANT_DELETE,
+            PREFERENCE_READ,
+            PREFERENCE_WRITE,
+            PREFERENCE_DELETE
     )),
     MODERATOR(Sets.newHashSet(
-            UserPermission.USER_READ,
-            UserPermission.USER_WRITE,
-            UserPermission.USER_CHANGE,
-            UserPermission.MERCHANT_READ,
-            UserPermission.MERCHANT_WRITE,
-            UserPermission.MERCHANT_CHANGE
+            USER_READ,
+            USER_WRITE,
+            USER_CHANGE,
+            MERCHANT_READ,
+            MERCHANT_WRITE,
+            MERCHANT_CHANGE,
+            PREFERENCE_READ
     ));
     private final Set<UserPermission> userPermissionSet;
 
