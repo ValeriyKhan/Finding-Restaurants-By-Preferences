@@ -11,12 +11,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import restaurant.app.messagesingleton.MessageSingleton;
-import restaurant.app.user.dto.ChangeUserRequest;
-import restaurant.app.user.dto.CreateUserRequest;
-import restaurant.app.user.dto.GetUserResponse;
+import restaurant.app.preference.Preference;
+import restaurant.app.preference.PreferenceService;
+import restaurant.app.user.dto.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -32,6 +33,7 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final MessageSingleton messageSingleton;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final PreferenceService preferenceService;
 
     public ResponseEntity<?> getAllUsers(int page, int size) {
         Page<User> userList = userRepository.findAll(PageRequest.of(page, size));
@@ -119,5 +121,25 @@ public class UserService implements UserDetailsService {
             throw new UsernameNotFoundException("User does not exist");
         }
         return userOptional.get();
+    }
+
+    public ResponseEntity<?> addPreferencesToUser(AddPreferencesToUserRequest addPreferencesToUserRequest) {
+        Optional<User> userOptional = userRepository.findById(addPreferencesToUserRequest.getUserId());
+        if (userOptional.isEmpty()) {
+            return messageSingleton.userDoesNotExist();
+        }
+        List<Preference> preferenceListToSet = preferenceService.matchPreferences(addPreferencesToUserRequest.getPreferenceIds());
+        if (preferenceListToSet.isEmpty()) {
+            return messageSingleton.badRequest();
+        }
+        User user = userOptional.get();
+        user.setPreferenceList(preferenceListToSet);
+        userRepository.save(user);
+        return messageSingleton.ok(Map.of("user", AddPreferencesToUserResponse.builder()
+                .userId(user.getId())
+                .username(user.getUsername())
+                .userPreferenceList(preferenceListToSet)
+                .build())
+        );
     }
 }

@@ -5,13 +5,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import restaurant.app.merchantPlace.dto.ChangeMerchantPlace;
-import restaurant.app.merchantPlace.dto.CreateMerchantPlaceRequest;
-import restaurant.app.merchantPlace.dto.CreateMerchantPlaceResponse;
-import restaurant.app.merchantPlace.dto.SetPreferencesToMerchantPlaceRequest;
+import restaurant.app.merchantPlace.dto.*;
 import restaurant.app.messagesingleton.MessageSingleton;
 import restaurant.app.preference.Preference;
 import restaurant.app.preference.PreferenceRepository;
+import restaurant.app.preference.PreferenceService;
 import restaurant.app.threadLocalSingleton.ThreadLocalSingleton;
 
 import java.util.*;
@@ -22,6 +20,7 @@ public class MerchantPlaceService {
     private final MerchantPlaceRepository merchantPlaceRepository;
     private final PreferenceRepository preferenceRepository;
     private final MessageSingleton messageSingleton;
+    private final PreferenceService preferenceService;
 
     public ResponseEntity<?> createMerchantPlace(CreateMerchantPlaceRequest createMerchantPlaceRequest) {
         Optional<MerchantPlace> optionalMerchantPlace = merchantPlaceRepository
@@ -84,23 +83,14 @@ public class MerchantPlaceService {
         if (optionalMerchantPlace.isEmpty()) {
             return messageSingleton.merchantNotFound();
         }
-        List<Preference> preferencesFromDB = preferenceRepository.findAll();
-        List<Preference> preferencesToSetToEntity = matchPreferences(setPreferencesToMerchantPlaceRequest.getPreferences(), preferencesFromDB);
+        List<Preference> preferencesToSetToEntity = preferenceService.matchPreferences(setPreferencesToMerchantPlaceRequest.getPreferenceIdList());
         MerchantPlace merchantPlace = optionalMerchantPlace.get();
         merchantPlace.setPreferences(preferencesToSetToEntity);
         merchantPlaceRepository.save(merchantPlace);
-        return messageSingleton.ok(Map.of("preferences", preferencesToSetToEntity));
-    }
-
-    private List<Preference> matchPreferences(List<Preference> preferencesFromRequest, List<Preference> preferencesFromDB) {
-        List<Preference> preferencesToResponse = new ArrayList<>();
-        for (Preference preferenceFromDB : preferencesFromDB) {
-            for (Preference preferenceFromRequest : preferencesFromRequest) {
-                if (Objects.equals(preferenceFromDB.getName(), preferenceFromRequest.getName())) {
-                    preferencesToResponse.add(preferenceFromDB);
-                }
-            }
-        }
-        return preferencesToResponse;
+        return messageSingleton.ok(Map.of("preferences", SetPreferencesToMerchantPlaceResponse.builder()
+                .merchantPlaceId(merchantPlace.getId())
+                .merchantPlaceName(merchantPlace.getMerchantName())
+                .preferenceListOfMerchantPlace(preferencesToSetToEntity)
+                .build()));
     }
 }

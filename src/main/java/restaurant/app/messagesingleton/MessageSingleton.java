@@ -64,4 +64,8 @@ public class MessageSingleton {
     public ResponseEntity<?> preferenceNotFound() {
         return new ResponseEntity<>(Map.of("error", " Some preferences not found in list"), BAD_REQUEST);
     }
+
+    public ResponseEntity<?> badRequest() {
+        return new ResponseEntity<>(Map.of("error", "Bad request!"), BAD_REQUEST);
+    }
 }
