@@ -1,5 +1,6 @@
 package restaurant.app.merchantPlace.dto;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import restaurant.app.preference.Preference;
@@ -8,7 +9,9 @@ import java.util.List;
 
 @Getter
 @Setter
-public class SetPreferencesToMerchantPlaceRequest {
+@Builder
+public class SetPreferencesToMerchantPlaceResponse {
     private Long merchantPlaceId;
-    private List<Long> preferenceIdList;
+    private String merchantPlaceName;
+    private List<Preference> preferenceListOfMerchantPlace;
 }

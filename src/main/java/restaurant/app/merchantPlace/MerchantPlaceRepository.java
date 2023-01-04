@@ -8,6 +8,5 @@ import java.util.Optional;
 
 public interface MerchantPlaceRepository extends JpaRepository<MerchantPlace, Long> {
     List<MerchantPlace> findMerchantPlacesByPreferencesIn(List<Preference> preferences);
-
     Optional<MerchantPlace> findByMerchantName(String merchantName);
 }

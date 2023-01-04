@@ -11,7 +11,6 @@ import javax.persistence.*;
 @Entity
 @Table
 public class Preference {
-    @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

@@ -3,8 +3,11 @@ package restaurant.app.user;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import restaurant.app.user.dto.AddPreferencesToUserRequest;
 import restaurant.app.user.dto.ChangeUserRequest;
 import restaurant.app.user.dto.CreateUserRequest;
+
+import javax.validation.Valid;
 
 
 @RestController
@@ -43,5 +46,12 @@ public class UserController {
     public ResponseEntity<?> deleteUser(
             @PathVariable("userId") Long userId) {
         return userService.deleteUser(userId);
+    }
+
+    @PostMapping("add-preferences")
+    public ResponseEntity<?> addPreferencesToUser(
+            @Valid @RequestBody AddPreferencesToUserRequest addPreferencesToUserRequest
+    ) {
+        return userService.addPreferencesToUser(addPreferencesToUserRequest);
     }
 }

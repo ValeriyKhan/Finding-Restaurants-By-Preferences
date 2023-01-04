@@ -6,9 +6,7 @@ import org.springframework.stereotype.Service;
 import restaurant.app.messagesingleton.MessageSingleton;
 import restaurant.app.preference.dto.CreatePreferenceRequest;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -28,8 +26,12 @@ public class PreferenceService {
     }
 
     public ResponseEntity<?> getAllPreferences() {
-        List<Preference> preferences = preferenceRepository.findAll();
+        List<Preference> preferences = getPreferenceListFromDb();
         return messageSingleton.ok(Map.of("preferences", preferences));
+    }
+
+    public List<Preference> getPreferenceListFromDb() {
+        return preferenceRepository.findAll();
     }
 
     public ResponseEntity<?> deletePreference(Long id) {
@@ -39,5 +41,18 @@ public class PreferenceService {
         }
         preferenceRepository.deleteById(id);
         return messageSingleton.ok(Map.of("message", "Preference deleted"));
+    }
+
+    public List<Preference> matchPreferences(List<Long> preferenceIdFromRequest) {
+        List<Preference> preferenceFromDBList = preferenceRepository.findAll();
+        List<Preference> preferencesToResponse = new ArrayList<>();
+        for (Preference prefIdFromDb : preferenceFromDBList) {
+            for (Long prefIdFromRequest : preferenceIdFromRequest) {
+                if (Objects.equals(prefIdFromDb.getId(), prefIdFromRequest)) {
+                    preferencesToResponse.add(prefIdFromDb);
+                }
+            }
+        }
+        return preferencesToResponse;
     }
 }
