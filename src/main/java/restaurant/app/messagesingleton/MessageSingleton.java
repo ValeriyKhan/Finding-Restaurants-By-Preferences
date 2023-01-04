@@ -68,4 +68,12 @@ public class MessageSingleton {
     public ResponseEntity<?> badRequest() {
         return new ResponseEntity<>(Map.of("error", "Bad request!"), BAD_REQUEST);
     }
+
+    public ResponseEntity<?> messageAlreadyExists() {
+        return new ResponseEntity<>(Map.of("error", "This message already exists!"), BAD_REQUEST);
+    }
+
+    public ResponseEntity<?> messageDoesNotExist() {
+        return new ResponseEntity<>(Map.of("error", "This message does not exist!"), BAD_REQUEST);
+    }
 }

@@ -27,7 +27,9 @@ public enum UserRole {
             MERCHANT_DELETE,
             PREFERENCE_READ,
             PREFERENCE_WRITE,
-            PREFERENCE_DELETE
+            PREFERENCE_DELETE,
+            LANG_MESSAGE_WRITE,
+            LANG_MESSAGE_READ
     )),
     MODERATOR(Sets.newHashSet(
             USER_READ,
@@ -36,7 +38,8 @@ public enum UserRole {
             MERCHANT_READ,
             MERCHANT_WRITE,
             MERCHANT_CHANGE,
-            PREFERENCE_READ
+            PREFERENCE_READ,
+            LANG_MESSAGE_READ
     ));
     private final Set<UserPermission> userPermissionSet;
 

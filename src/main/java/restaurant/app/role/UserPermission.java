@@ -16,7 +16,9 @@ public enum UserPermission implements GrantedAuthority {
     MERCHANT_CHANGE("merchant:change"),
     PREFERENCE_WRITE("preference:write"),
     PREFERENCE_READ("preference:read"),
-    PREFERENCE_DELETE("preference:delete");
+    PREFERENCE_DELETE("preference:delete"),
+    LANG_MESSAGE_WRITE("langMessage:write"),
+    LANG_MESSAGE_READ("langMessage:read");
 
     private final String permission;
 

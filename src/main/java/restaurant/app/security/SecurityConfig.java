@@ -11,6 +11,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import restaurant.app.security.Filters.JwtTokenVerifierFilter;
 
+import static org.springframework.http.HttpMethod.*;
+
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
@@ -30,16 +32,18 @@ public class SecurityConfig {
                 .antMatchers("/**/auth/create-admin").permitAll()
                 .antMatchers("/**/login").permitAll()
                 .antMatchers("/**/register").permitAll()
-                .antMatchers(HttpMethod.GET, "/**/user/**").hasAuthority("user:read")
-                .antMatchers(HttpMethod.POST, "/**/user/**").hasAuthority("user:write")
-                .antMatchers(HttpMethod.DELETE,"/**/user/**").hasAuthority("user:delete")
-                .antMatchers(HttpMethod.GET, "/**/merchant-place/**").hasAuthority("merchant:read")
-                .antMatchers(HttpMethod.PUT, "/**/merchant-place/**").hasAuthority("merchant:write")
-                .antMatchers(HttpMethod.POST, "/**/merchant-place/**").hasAuthority("merchant:write")
-                .antMatchers(HttpMethod.DELETE, "/**/merchant-place/**").hasAuthority("merchant:delete")
-                .antMatchers(HttpMethod.POST, "/**/preference/**").hasAuthority("preference:write")
-                .antMatchers(HttpMethod.GET, "/**/preference/**").hasAuthority("preference:read")
-                .antMatchers(HttpMethod.DELETE, "/**/preference/**").hasAuthority("preference:delete")
+                .antMatchers(GET, "/**/user/**").hasAuthority("user:read")
+                .antMatchers(POST, "/**/user/**").hasAuthority("user:write")
+                .antMatchers(DELETE, "/**/user/**").hasAuthority("user:delete")
+                .antMatchers(GET, "/**/merchant-place/**").hasAuthority("merchant:read")
+                .antMatchers(PUT, "/**/merchant-place/**").hasAuthority("merchant:write")
+                .antMatchers(POST, "/**/merchant-place/**").hasAuthority("merchant:write")
+                .antMatchers(DELETE, "/**/merchant-place/**").hasAuthority("merchant:delete")
+                .antMatchers(POST, "/**/preference/**").hasAuthority("preference:write")
+                .antMatchers(GET, "/**/preference/**").hasAuthority("preference:read")
+                .antMatchers(DELETE, "/**/preference/**").hasAuthority("preference:delete")
+                .antMatchers(POST, "/**/lang-message/**").hasAuthority("langMessage:write")
+                .antMatchers(GET, "/**/lang-message/**").hasAuthority("langMessage:read")
                 .anyRequest()
                 .authenticated();
         return http.build();
