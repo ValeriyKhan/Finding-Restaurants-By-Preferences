@@ -27,6 +27,13 @@ public class LangMessageController {
     ) {
         return langMessageService.getAllMessages(size, page);
     }
+    @GetMapping("language")
+    public ResponseEntity<?> getAllMessagesByLanguage(
+            @RequestParam("size") int size,
+            @RequestParam("page") int page
+    ) {
+        return langMessageService.getAllMessagesByLanguage(size, page);
+    }
     @DeleteMapping
     public ResponseEntity<?> deleteMessage(
             @RequestParam("id") Long id

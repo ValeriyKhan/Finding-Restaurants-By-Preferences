@@ -2,6 +2,7 @@ package restaurant.app.security.Filters;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -11,8 +12,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import restaurant.app.langMessage.Language;
 import restaurant.app.security.jwt.JwtUtils;
-import restaurant.app.threadLocalSingleton.ThreadLocalSingleton;
 import restaurant.app.user.UserRepository;
 import restaurant.app.user.User;
 
@@ -22,7 +23,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
+
+import static restaurant.app.threadLocalSingleton.ThreadLocalSingleton.*;
 
 @Component
 @RequiredArgsConstructor
@@ -34,10 +38,15 @@ public class JwtTokenVerifierFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain) throws ServletException, IOException {
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain) throws ServletException, IOException {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        final String langHeader = request.getHeader("LANG");
         final String username;
+        if (langHeader == null) {
+            throw new IllegalStateException("There is no parameter for LANG header");
+        }
+        setLang(new Language(langHeader));
         if (authHeader == null) {
             filterChain.doFilter(request, response);
             return;
@@ -57,7 +66,10 @@ public class JwtTokenVerifierFilter extends OncePerRequestFilter {
             if (user.isBlocked()) {
                 throw new IllegalStateException("User is blocked!");
             }
-            List<Map<String, String>> authorities = (List<Map<String, String>>) claims.get("authorities");
+            List<Map<String, String>> authorities = claims.get("authorities", List.class);
+            if (Objects.isNull(authorities)) {
+                throw new IllegalStateException("Token can not be trusted!");
+            }
             Set<SimpleGrantedAuthority> simpleGrantedAuthorities =
                     authorities.stream()
                             .map(a -> new SimpleGrantedAuthority(a.get("authority")))
@@ -68,12 +80,10 @@ public class JwtTokenVerifierFilter extends OncePerRequestFilter {
                     simpleGrantedAuthorities
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            ThreadLocalSingleton.setUser(user);
+            setUser(user);
         } catch (JwtException e) {
             throw new IllegalStateException("Token can not be trusted!");
         }
         filterChain.doFilter(request, response);
-
-
     }
 }
