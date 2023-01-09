@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 
+
 @Entity
 @Table
 @Getter
@@ -18,9 +19,9 @@ public class LangMessage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    @Column(unique = true)
-    private String messageName;
-    private String ru;
-    private String uz;
-    private String en;
+    private String key;
+    @Enumerated(EnumType.STRING)
+    private LanguageEnum lang;
+    private String message;
+
 }

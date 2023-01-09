@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import restaurant.app.merchantPlace.MerchantPlace;
 import restaurant.app.merchantPlace.MerchantPlaceRepository;
 import restaurant.app.preference.Preference;
-import restaurant.app.rating.Rating;
 import restaurant.app.threadLocalSingleton.ThreadLocalSingleton;
 import restaurant.app.user.User;
 import restaurant.app.user.UserRepository;
