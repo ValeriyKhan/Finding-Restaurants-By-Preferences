@@ -52,7 +52,7 @@ public class LangMessageService {
         return messageSingleton.ok(Map.of("message", "Message with id: " + id + " deleted"));
     }
 
-    public String getMessageBasedOnLanguage(String key) {
+    public String getMessageBasedOnLanguage(MessageKey key) {
         Optional<LangMessage> optionalLangMessage = langMessageRepository.findByKeyAndLang(key, getLang().getEnumValue());
         if (optionalLangMessage.isEmpty()) {
             throw new RuntimeException("Message not found in database!");

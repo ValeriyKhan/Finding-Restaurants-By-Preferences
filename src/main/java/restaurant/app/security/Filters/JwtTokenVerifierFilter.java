@@ -12,7 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import restaurant.app.langMessage.Language;
+import restaurant.app.langMessage.Lang;
 import restaurant.app.security.jwt.JwtUtils;
 import restaurant.app.user.UserRepository;
 import restaurant.app.user.User;
@@ -44,9 +44,9 @@ public class JwtTokenVerifierFilter extends OncePerRequestFilter {
         final String langHeader = request.getHeader("LANG");
         final String username;
         if (langHeader == null) {
-            throw new IllegalStateException("There is no parameter for LANG header");
+            setLang(new Lang("RU"));
         }
-        setLang(new Language(langHeader));
+        setLang(new Lang(langHeader));
         if (authHeader == null) {
             filterChain.doFilter(request, response);
             return;
