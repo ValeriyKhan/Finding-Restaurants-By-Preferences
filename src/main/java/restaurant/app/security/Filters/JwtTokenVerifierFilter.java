@@ -43,10 +43,7 @@ public class JwtTokenVerifierFilter extends OncePerRequestFilter {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         final String langHeader = request.getHeader("LANG");
         final String username;
-        if (langHeader == null) {
-            setLang(new Lang("RU"));
-        }
-        setLang(new Lang(langHeader));
+        setLang(new Lang(Objects.requireNonNullElse(langHeader, "RU")));
         if (authHeader == null) {
             filterChain.doFilter(request, response);
             return;

@@ -14,8 +14,8 @@ public class GoogleMapController {
     private final GoogleMapService googleMapService;
     @GetMapping
     public ResponseEntity<?> getMerchantsNearbyLocations(
-            @RequestParam("lat") Long lat,
-            @RequestParam("lng") Long lng
+            @RequestParam("lat") double lat,
+            @RequestParam("lng") double lng
     ) {
         return googleMapService.getMerchantsNearbyLocations(lat, lng);
     }

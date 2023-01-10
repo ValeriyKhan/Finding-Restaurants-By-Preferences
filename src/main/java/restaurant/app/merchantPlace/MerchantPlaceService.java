@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import restaurant.app.merchantPlace.dto.*;
 import restaurant.app.messagesingleton.MessageSingleton;
-import restaurant.app.preference.Preference;
+import restaurant.app.preference.PreferenceEntity;
 import restaurant.app.preference.PreferenceRepository;
 import restaurant.app.preference.PreferenceService;
 import restaurant.app.threadLocalSingleton.ThreadLocalSingleton;
@@ -54,7 +54,7 @@ public class MerchantPlaceService {
                 .merchantName(merchantPlace.getMerchantName())
                 .merchantPlaceOwner(ThreadLocalSingleton.getUser().getUsername())
                 .address(merchantPlace.getAddress())
-                .preferences(merchantPlace.getPreferences())
+                .preferenceEntities(merchantPlace.getPreferenceEntities())
                 .build();
         return messageSingleton.ok(Map.of("MerchantPlace", response));
     }
@@ -71,7 +71,7 @@ public class MerchantPlaceService {
         }
         MerchantPlace merchantPlace = optionalMerchantPlace.get();
         merchantPlace.setMerchantName(changeMerchantPlace.getMerchantName());
-        merchantPlace.setPreferences(changeMerchantPlace.getPreferences());
+        merchantPlace.setPreferenceEntities(changeMerchantPlace.getPreferenceEntities());
         merchantPlace.setAddress(changeMerchantPlace.getAddress());
         merchantPlaceRepository.save(merchantPlace);
         return messageSingleton.ok(Map.of("message: User changed", merchantPlace));
@@ -83,14 +83,14 @@ public class MerchantPlaceService {
         if (optionalMerchantPlace.isEmpty()) {
             return messageSingleton.merchantNotFound();
         }
-        List<Preference> preferencesToSetToEntity = preferenceService.matchPreferences(setPreferencesToMerchantPlaceRequest.getPreferenceIdList());
+        List<PreferenceEntity> preferencesToSetToEntity = preferenceService.matchPreferences(setPreferencesToMerchantPlaceRequest.getPreferenceIdList());
         MerchantPlace merchantPlace = optionalMerchantPlace.get();
-        merchantPlace.setPreferences(preferencesToSetToEntity);
+        merchantPlace.setPreferenceEntities(preferencesToSetToEntity);
         merchantPlaceRepository.save(merchantPlace);
         return messageSingleton.ok(Map.of("preferences", SetPreferencesToMerchantPlaceResponse.builder()
                 .merchantPlaceId(merchantPlace.getId())
                 .merchantPlaceName(merchantPlace.getMerchantName())
-                .preferenceListOfMerchantPlace(preferencesToSetToEntity)
+                .preferenceEntityListOfMerchantPlace(preferencesToSetToEntity)
                 .build()));
     }
 }
