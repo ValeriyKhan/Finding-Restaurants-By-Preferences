@@ -11,7 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import restaurant.app.messagesingleton.MessageSingleton;
-import restaurant.app.preference.Preference;
+import restaurant.app.preference.PreferenceEntity;
 import restaurant.app.preference.PreferenceService;
 import restaurant.app.user.dto.*;
 
@@ -128,17 +128,17 @@ public class UserService implements UserDetailsService {
         if (userOptional.isEmpty()) {
             return messageSingleton.userDoesNotExist();
         }
-        List<Preference> preferenceListToSet = preferenceService.matchPreferences(addPreferencesToUserRequest.getPreferenceIds());
-        if (preferenceListToSet.isEmpty()) {
+        List<PreferenceEntity> preferenceEntityListToSet = preferenceService.matchPreferences(addPreferencesToUserRequest.getPreferenceIds());
+        if (preferenceEntityListToSet.isEmpty()) {
             return messageSingleton.badRequest();
         }
         User user = userOptional.get();
-        user.setPreferenceList(preferenceListToSet);
+        user.setPreferenceEntityList(preferenceEntityListToSet);
         userRepository.save(user);
         return messageSingleton.ok(Map.of("user", AddPreferencesToUserResponse.builder()
                 .userId(user.getId())
                 .username(user.getUsername())
-                .userPreferenceList(preferenceListToSet)
+                .userPreferenceListEntity(preferenceEntityListToSet)
                 .build())
         );
     }

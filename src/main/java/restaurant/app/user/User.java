@@ -5,7 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import restaurant.app.merchantPlace.MerchantPlace;
-import restaurant.app.preference.Preference;
+import restaurant.app.preference.PreferenceEntity;
 import restaurant.app.rating.Rating;
 import restaurant.app.role.UserRole;
 import restaurant.app.user.status.UserStatus;
@@ -50,7 +50,7 @@ public class User implements UserDetails {
     @Enumerated(STRING)
     private UserRole role;
     @ManyToMany(fetch = FetchType.LAZY)
-    private List<Preference> preferenceList;
+    private List<PreferenceEntity> preferenceEntityList;
     @ManyToMany(fetch = FetchType.LAZY)
     private List<Rating> ratingList;
     @ManyToMany(fetch = FetchType.LAZY)

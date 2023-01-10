@@ -1,7 +1,7 @@
 package restaurant.app.merchantPlace;
 
 import lombok.*;
-import restaurant.app.preference.Preference;
+import restaurant.app.preference.PreferenceEntity;
 import restaurant.app.rating.Rating;
 import restaurant.app.user.User;
 
@@ -26,14 +26,14 @@ public class MerchantPlace {
     @OneToOne
     private User merchantPlaceOwner;
     @ManyToMany(fetch = FetchType.LAZY)
-    private List<Preference> preferences;
+    private List<PreferenceEntity> preferenceEntities;
     @ManyToMany(fetch = FetchType.LAZY)
     private List<User> userList;
     @ManyToMany(fetch = FetchType.LAZY)
     private List<Rating> ratingList;
     private String address;
-    private String latitude;
-    private String longitude;
+    private double latitude;
+    private double longitude;
 
     public void calculateOverallRating() {
         this.overallRating = (this.ratingList.stream().mapToLong(Rating::getStars).sum()) / this.ratingList.size();
