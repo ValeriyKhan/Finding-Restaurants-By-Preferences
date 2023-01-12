@@ -49,12 +49,12 @@ public class MessageSingleton {
         return new ResponseEntity<>(Map.of("error", "Trying create an admin. Permission denied"), FORBIDDEN);
     }
 
-    public ResponseEntity<?> merchantNotFound() {
-        return new ResponseEntity<>(Map.of("error", "Merchant not found"), BAD_REQUEST);
+    public ResponseEntity<?> branchNotFound() {
+        return new ResponseEntity<>(Map.of("error", "Branch not found"), BAD_REQUEST);
     }
 
-    public ResponseEntity<?> merchantAlreadyExists() {
-        return new ResponseEntity<>(Map.of("error", "Merchant already exists"), BAD_REQUEST);
+    public ResponseEntity<?> branchAlreadyExists() {
+        return new ResponseEntity<>(Map.of("error", "Branch already exists"), BAD_REQUEST);
     }
 
     public ResponseEntity<?> preferenceAlreadyExists() {

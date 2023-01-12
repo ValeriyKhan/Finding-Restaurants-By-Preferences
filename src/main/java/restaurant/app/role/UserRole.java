@@ -25,6 +25,10 @@ public enum UserRole {
             MERCHANT_WRITE,
             MERCHANT_CHANGE,
             MERCHANT_DELETE,
+            FILIAL_READ,
+            FILIAL_WRITE,
+            FILIAL_CHANGE,
+            FILIAL_DELETE,
             PREFERENCE_READ,
             PREFERENCE_WRITE,
             PREFERENCE_DELETE,
@@ -38,6 +42,9 @@ public enum UserRole {
             MERCHANT_READ,
             MERCHANT_WRITE,
             MERCHANT_CHANGE,
+            FILIAL_READ,
+            FILIAL_WRITE,
+            FILIAL_CHANGE,
             PREFERENCE_READ,
             LANG_MESSAGE_READ
     ));

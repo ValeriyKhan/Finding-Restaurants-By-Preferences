@@ -3,7 +3,7 @@ package restaurant.app.user.dto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import restaurant.app.preference.PreferenceEntity;
+import restaurant.app.preference.Preference;
 
 import java.util.List;
 
@@ -13,5 +13,5 @@ import java.util.List;
 public class AddPreferencesToUserResponse {
     private Long userId;
     private String username;
-    private List<PreferenceEntity> userPreferenceListEntity;
+    private List<Preference> userPreferenceListEntity;
 }

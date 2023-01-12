@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import restaurant.app.merchantPlace.MerchantPlace;
+import restaurant.app.merchantPlace.branch.Branch;
 import restaurant.app.user.User;
 
 import javax.persistence.*;
@@ -22,10 +23,9 @@ public class Rating {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    private Long stars;
-    @ManyToMany(fetch = FetchType.LAZY)
-    private List<User> userList;
-    @ManyToMany(fetch = FetchType.LAZY)
-    private List<MerchantPlace> merchantPlaceList;
-
+    @OneToOne
+    private User user;
+    @OneToOne
+    private Branch branch;
+    private int score;
 }
