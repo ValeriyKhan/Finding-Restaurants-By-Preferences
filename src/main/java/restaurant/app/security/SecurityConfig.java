@@ -30,18 +30,34 @@ public class SecurityConfig {
                 .addFilterBefore(jwtTokenVerifierFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/**/auth/create-admin").permitAll()
+
                 .antMatchers("/**/login").permitAll()
+
                 .antMatchers("/**/register").permitAll()
+
                 .antMatchers(GET, "/**/user/**").hasAuthority("user:read")
                 .antMatchers(POST, "/**/user/**").hasAuthority("user:write")
                 .antMatchers(DELETE, "/**/user/**").hasAuthority("user:delete")
+
                 .antMatchers(GET, "/**/merchant-place/**").hasAuthority("merchant:read")
                 .antMatchers(PUT, "/**/merchant-place/**").hasAuthority("merchant:write")
                 .antMatchers(POST, "/**/merchant-place/**").hasAuthority("merchant:write")
                 .antMatchers(DELETE, "/**/merchant-place/**").hasAuthority("merchant:delete")
+
+                .antMatchers(GET, "/**/merchant-place/**").hasAuthority("merchant:read")
+                .antMatchers(PUT, "/**/merchant-place/**").hasAuthority("merchant:write")
+                .antMatchers(POST, "/**/merchant-place/**").hasAuthority("merchant:write")
+                .antMatchers(DELETE, "/**/merchant-place/**").hasAuthority("merchant:delete")
+
+                .antMatchers(GET, "/**/filial/**").hasAuthority("filial:read")
+                .antMatchers(PUT, "/**/filial/**").hasAuthority("filial:write")
+                .antMatchers(POST, "/**/filial/**").hasAuthority("filial:write")
+                .antMatchers(DELETE, "/**/filial/**").hasAuthority("filial:delete")
+
                 .antMatchers(POST, "/**/preference/**").hasAuthority("preference:write")
                 .antMatchers(GET, "/**/preference/**").hasAuthority("preference:read")
                 .antMatchers(DELETE, "/**/preference/**").hasAuthority("preference:delete")
+
                 .antMatchers(POST, "/**/lang-message/**").hasAuthority("langMessage:write")
                 .antMatchers(GET, "/**/lang-message/**").hasAuthority("langMessage:read")
                 .anyRequest()

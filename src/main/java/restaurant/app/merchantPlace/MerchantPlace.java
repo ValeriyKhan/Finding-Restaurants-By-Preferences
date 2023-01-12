@@ -1,8 +1,10 @@
 package restaurant.app.merchantPlace;
 
-import lombok.*;
-import restaurant.app.preference.PreferenceEntity;
-import restaurant.app.rating.Rating;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import restaurant.app.merchantPlace.branch.Branch;
 import restaurant.app.user.User;
 
 import javax.persistence.*;
@@ -10,32 +12,22 @@ import java.util.List;
 
 @Table
 @Entity
+@NoArgsConstructor
 @Getter
 @Setter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class MerchantPlace {
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
     private Long id;
-    private Long overallRating;
-    @Column(unique = true)
-    private String merchantName;
+    @OneToMany(fetch = FetchType.EAGER)
+    private List<Branch> branches;
+    private String description;
     @OneToOne
-    private User merchantPlaceOwner;
-    @ManyToMany(fetch = FetchType.LAZY)
-    private List<PreferenceEntity> preferenceEntities;
-    @ManyToMany(fetch = FetchType.LAZY)
-    private List<User> userList;
-    @ManyToMany(fetch = FetchType.LAZY)
-    private List<Rating> ratingList;
-    private String address;
-    private double latitude;
-    private double longitude;
+    private User userOwner;
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<User> usersRatedMerchant;
 
-    public void calculateOverallRating() {
-        this.overallRating = (this.ratingList.stream().mapToLong(Rating::getStars).sum()) / this.ratingList.size();
-    }
 }

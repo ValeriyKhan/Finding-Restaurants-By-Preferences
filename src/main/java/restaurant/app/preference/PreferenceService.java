@@ -15,26 +15,26 @@ public class PreferenceService {
     private final MessageSingleton messageSingleton;
 
     public ResponseEntity<?> createPreference(CreatePreferenceRequest createPreferenceRequest) {
-        Optional<PreferenceEntity> optionalPreference = preferenceRepository.findPreferenceEntityByPreference(createPreferenceRequest.getPreference());
+        Optional<Preference> optionalPreference = preferenceRepository.findPreferenceEntityByPreferenceE(createPreferenceRequest.getPreferenceE());
         if (optionalPreference.isPresent()) {
             return messageSingleton.preferenceAlreadyExists();
         }
-        PreferenceEntity preferenceEntity = new PreferenceEntity(createPreferenceRequest.getPreference());
-        preferenceRepository.save(preferenceEntity);
-        return messageSingleton.ok(Map.of("preference", preferenceEntity));
+        Preference preference = new Preference(createPreferenceRequest.getPreferenceE());
+        preferenceRepository.save(preference);
+        return messageSingleton.ok(Map.of("preference", preference));
     }
 
     public ResponseEntity<?> getAllPreferences() {
-        List<PreferenceEntity> preferenceEntities = getPreferenceListFromDb();
+        List<Preference> preferenceEntities = getPreferenceListFromDb();
         return messageSingleton.ok(Map.of("preferences", preferenceEntities));
     }
 
-    public List<PreferenceEntity> getPreferenceListFromDb() {
+    public List<Preference> getPreferenceListFromDb() {
         return preferenceRepository.findAll();
     }
 
     public ResponseEntity<?> deletePreference(Long id) {
-        Optional<PreferenceEntity> optionalPreference = preferenceRepository.findById(id);
+        Optional<Preference> optionalPreference = preferenceRepository.findById(id);
         if (optionalPreference.isEmpty()) {
             return messageSingleton.preferenceNotFound();
         }
@@ -42,10 +42,10 @@ public class PreferenceService {
         return messageSingleton.ok(Map.of("message", "Preference deleted"));
     }
 
-    public List<PreferenceEntity> matchPreferences(List<Long> preferenceIdFromRequest) {
-        List<PreferenceEntity> preferenceEntityFromDBList = preferenceRepository.findAll();
-        List<PreferenceEntity> preferencesToResponse = new ArrayList<>();
-        for (PreferenceEntity prefIdFromDb : preferenceEntityFromDBList) {
+    public List<Preference> matchPreferences(List<Long> preferenceIdFromRequest) {
+        List<Preference> preferenceFromDBList = preferenceRepository.findAll();
+        List<Preference> preferencesToResponse = new ArrayList<>();
+        for (Preference prefIdFromDb : preferenceFromDBList) {
             for (Long prefIdFromRequest : preferenceIdFromRequest) {
                 if (Objects.equals(prefIdFromDb.getId(), prefIdFromRequest)) {
                     preferencesToResponse.add(prefIdFromDb);
