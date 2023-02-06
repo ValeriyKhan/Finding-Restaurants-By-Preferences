@@ -16,4 +16,6 @@ public class CreateBranchRequest {
     private String branchName;
     @NotNull(message = "Cannot be empty")
     private String address;
+    @NotNull
+    private Long merchantPlaceId;
 }

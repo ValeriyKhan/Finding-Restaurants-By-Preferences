@@ -1,13 +1,11 @@
 package restaurant.app.merchantPlace;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import restaurant.app.merchantPlace.branch.Branch;
 import restaurant.app.user.User;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Table
@@ -15,19 +13,20 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 public class MerchantPlace {
-    @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    @OneToMany(fetch = FetchType.EAGER)
-    private List<Branch> branches;
+    @OneToMany(mappedBy = "merchantPlace")
+    private List<Branch> branches = new ArrayList<>();
+    @Column(unique = true)
+    private String merchantName;
     private String description;
     @OneToOne
-    private User userOwner;
-    @OneToMany(fetch = FetchType.LAZY)
-    private List<User> usersRatedMerchant;
-
+    private User owner;
+    private double overallRating;
 }

@@ -10,7 +10,7 @@ import javax.crypto.SecretKey;
 @Configuration
 //@ConfigurationProperties(prefix = "jwt")
 public class SecurityPropertyConfiguration {
-    private String key = "testtestvalerasecret1237fffasdj2123";
+    private String key = "testtestvaler123dfr4534dfgsa#cst";
     public SecretKey getKey() {
         return Keys.hmacShaKeyFor(key.getBytes());
     }

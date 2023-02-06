@@ -76,4 +76,20 @@ public class MessageSingleton {
     public ResponseEntity<?> messageDoesNotExist() {
         return new ResponseEntity<>(Map.of("error", "This message does not exist!"), BAD_REQUEST);
     }
+
+    public ResponseEntity<?> ratingDoesNotExist() {
+        return new ResponseEntity<>(Map.of("error", "Rating does not exist!"), BAD_REQUEST);
+    }
+
+    public ResponseEntity<?> merchantPlaceDoesNotExist() {
+        return new ResponseEntity<>(Map.of("error", "MerchantPlace does not exist!"), BAD_REQUEST);
+    }
+
+    public ResponseEntity<?> merchantAlreadyExist() {
+        return new ResponseEntity<>(Map.of("error", "MerchantPlace already exist!"), BAD_REQUEST);
+    }
+
+    public ResponseEntity<?> userDoesNotMatch() {
+        return new ResponseEntity<>(Map.of("error", "User does not match"), BAD_REQUEST);
+    }
 }

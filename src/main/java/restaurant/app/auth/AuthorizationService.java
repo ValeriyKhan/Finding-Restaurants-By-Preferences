@@ -17,7 +17,6 @@ import restaurant.app.messagesingleton.MessageSingleton;
 import restaurant.app.security.RefreshTokenEntity;
 import restaurant.app.security.jwt.JwtUtils;
 import restaurant.app.security.repository.RefreshTokenRepository;
-import restaurant.app.threadLocalSingleton.ThreadLocalSingleton;
 import restaurant.app.user.User;
 import restaurant.app.user.UserRepository;
 import restaurant.app.user.dto.CreateAdminRequest;
@@ -88,12 +87,12 @@ public class AuthorizationService {
                 if (!appUserDetails.isEnabled()) {
                     return messageSingleton.userIsBlocked();
                 }
-                RefreshTokenEntity refreshTokenEntity = new RefreshTokenEntity();
-                String salt = generateSalt();
-                String accessToken = jwtUtils.generateToken(appUserDetails, salt);
-                String refreshToken = jwtUtils.generateToken(appUserDetails, salt);
                 Optional<User> optionalAppUser = userRepository.findByUsername(appUserDetails.getUsername());
                 User user = optionalAppUser.get();
+                RefreshTokenEntity refreshTokenEntity = new RefreshTokenEntity();
+                String salt = generateSalt();
+                String accessToken = jwtUtils.generateToken(user, salt);
+                String refreshToken = jwtUtils.generateToken(user, salt);
                 user.setSalt(salt);
                 refreshTokenEntity.setUser(user);
                 refreshTokenEntity.setToken(refreshToken);
@@ -112,42 +111,40 @@ public class AuthorizationService {
         return messageSingleton.failedLogin("Failed login");
     }
 
-    public ResponseEntity<?> generateAccessToken(GenerateTokenRequest refreshToken) {
-        String token = refreshToken.getToken();
+    public ResponseEntity<?> generateAccessToken(GenerateTokenRequest tokenFromRequest) {
+        String token = tokenFromRequest.getToken();
         String username = jwtUtils.extractUsername(token);
         Claims claims = jwtUtils.extractAllClaims(token);
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        String salt = generateSalt();
-        String newAccessToken = jwtUtils.generateToken(userDetails, claims, salt);
         Optional<User> appUserOptional = userRepository.findByUsername(username);
         if (appUserOptional.isEmpty()) {
             return messageSingleton.userDoesNotExist();
         }
         User user = appUserOptional.get();
+        String salt = generateSalt();
+        String newAccessToken = jwtUtils.generateToken(user, claims, salt);
         user.setSalt(salt);
         userRepository.save(user);
         return messageSingleton.ok(Map.of("accessToken", newAccessToken));
     }
 
-    public ResponseEntity<?> generateRefreshToken(GenerateTokenRequest refreshToken) {
-        String token = refreshToken.getToken();
+    public ResponseEntity<?> generateRefreshToken(GenerateTokenRequest tokenFromRequest) {
+        String token = tokenFromRequest.getToken();
         String username = jwtUtils.extractUsername(token);
         Claims claims = jwtUtils.extractAllClaims(token);
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        String salt = generateSalt();
-        String newAccessToken = jwtUtils.generateToken(userDetails, claims, salt);
-        String newRefreshToken = jwtUtils.generateRefreshToken(userDetails, salt);
         Optional<User> appUserOptional = userRepository.findByUsername(username);
         if (appUserOptional.isEmpty()) {
             return messageSingleton.userDoesNotExist();
         }
         User user = appUserOptional.get();
+        String salt = generateSalt();
+        String newAccessToken = jwtUtils.generateToken(user, claims, salt);
+        String newRefreshToken = jwtUtils.generateRefreshToken(user, salt);
         user.setSalt(salt);
         userRepository.save(user);
 
         return messageSingleton.ok(Map.of(
                 "accessToken", newAccessToken,
-                "refreshToken", newRefreshToken));
+                "tokenFromRequest", newRefreshToken));
     }
 
     public ResponseEntity<?> createAdmin(

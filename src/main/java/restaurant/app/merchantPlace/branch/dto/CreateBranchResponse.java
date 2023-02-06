@@ -4,10 +4,12 @@ import lombok.Builder;
 import restaurant.app.preference.Preference;
 
 import java.util.List;
+
 @Builder
 public class CreateBranchResponse {
     public Long id;
     public String branchName;
     public String address;
+    public String merchantPlaceNameOwner;
     public List<Preference> preferenceEntities;
 }

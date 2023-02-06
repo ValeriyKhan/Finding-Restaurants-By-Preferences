@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import restaurant.app.langMessage.Lang;
+import restaurant.app.role.UserRole;
 import restaurant.app.security.jwt.JwtUtils;
 import restaurant.app.user.UserRepository;
 import restaurant.app.user.User;
@@ -63,22 +64,23 @@ public class JwtTokenVerifierFilter extends OncePerRequestFilter {
             if (user.isBlocked()) {
                 throw new IllegalStateException("User is blocked!");
             }
-            List<Map<String, String>> authorities = claims.get("authorities", List.class);
-            if (Objects.isNull(authorities)) {
+            try {
+                UserRole role = UserRole.valueOf(claims.get("role", String.class));
+
+                Set<SimpleGrantedAuthority> simpleGrantedAuthorities = role.getUserPermissionSet().stream()
+                        .map(a -> new SimpleGrantedAuthority(a.getAuthority()))
+                        .collect(Collectors.toSet());
+                Authentication authentication = new UsernamePasswordAuthenticationToken(
+                        username,
+                        null,
+                        simpleGrantedAuthorities
+                );
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                setUser(user);
+            } catch (IllegalArgumentException e) {
                 throw new IllegalStateException("Token can not be trusted!");
             }
-            Set<SimpleGrantedAuthority> simpleGrantedAuthorities =
-                    authorities.stream()
-                            .map(a -> new SimpleGrantedAuthority(a.get("authority")))
-                            .collect(Collectors.toSet());
-            Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    username,
-                    null,
-                    simpleGrantedAuthorities
-            );
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            setUser(user);
-        } catch (JwtException e) {
+        } catch (Exception e) {
             throw new IllegalStateException("Token can not be trusted!");
         }
         filterChain.doFilter(request, response);
