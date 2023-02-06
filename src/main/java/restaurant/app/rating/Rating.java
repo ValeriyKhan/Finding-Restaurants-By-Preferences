@@ -1,9 +1,6 @@
 package restaurant.app.rating;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import restaurant.app.merchantPlace.MerchantPlace;
 import restaurant.app.merchantPlace.branch.Branch;
 import restaurant.app.user.User;
@@ -13,11 +10,12 @@ import java.util.List;
 
 @Entity
 @Table
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
 public class Rating {
-    @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -56,6 +56,7 @@ public class UserService implements UserDetailsService {
                 .phoneNumber(user.getPhoneNumber())
                 .role(user.getRole())
                 .type(user.getType())
+                .preferenceList(user.getPreferenceList())
                 .build();
         return messageSingleton.ok(Map.of("user", getUserResponse));
     }

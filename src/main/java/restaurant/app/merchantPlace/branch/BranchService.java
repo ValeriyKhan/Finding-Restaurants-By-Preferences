@@ -5,22 +5,23 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import restaurant.app.merchantPlace.MerchantPlace;
+import restaurant.app.merchantPlace.MerchantPlaceRepository;
 import restaurant.app.merchantPlace.branch.dto.*;
 import restaurant.app.messagesingleton.MessageSingleton;
 import restaurant.app.preference.Preference;
-import restaurant.app.preference.PreferenceRepository;
 import restaurant.app.preference.PreferenceService;
-import restaurant.app.threadLocalSingleton.ThreadLocalSingleton;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class BranchService {
     private final BranchRepository branchRepository;
-    private final PreferenceRepository preferenceRepository;
     private final MessageSingleton messageSingleton;
     private final PreferenceService preferenceService;
+    private final MerchantPlaceRepository merchantPlaceRepository;
 
     public ResponseEntity<?> createBranch(CreateBranchRequest createBranchRequest) {
         Optional<Branch> optionalBranch = branchRepository
@@ -28,16 +29,24 @@ public class BranchService {
         if (optionalBranch.isPresent()) {
             return messageSingleton.branchAlreadyExists();
         }
+        Optional<MerchantPlace> optionalMerchantPlace = merchantPlaceRepository.findById(createBranchRequest.getMerchantPlaceId());
+        if (optionalMerchantPlace.isEmpty()) {
+            return messageSingleton.merchantPlaceDoesNotExist();
+        }
+        MerchantPlace merchantPlace = optionalMerchantPlace.get();
+        String branchName = createBranchRequest.getBranchName();
+        String address = createBranchRequest.getAddress();
         Branch branch = Branch.builder()
-                .branchName(createBranchRequest.getBranchName())
-                .branchOwner(ThreadLocalSingleton.getUser())
-                .address(createBranchRequest.getAddress())
+                .branchName(branchName)
+                .merchantPlace(merchantPlace)
+                .address(address)
                 .build();
         branchRepository.save(branch);
         CreateBranchResponse response = CreateBranchResponse.builder()
                 .id(branch.getId())
-                .branchName(createBranchRequest.getBranchName())
-                .address(createBranchRequest.getAddress())
+                .branchName(branchName)
+                .merchantPlaceNameOwner(merchantPlace.getMerchantName())
+                .address(address)
                 .build();
         return messageSingleton.ok(Map.of("branch", response));
     }
@@ -59,7 +68,15 @@ public class BranchService {
 
     public ResponseEntity<?> getAllBranches(int page, int size) {
         Page<Branch> branches = branchRepository.findAll(PageRequest.of(page, size));
-        return messageSingleton.ok(Map.of("branches", branches));
+        List<GetAllBranchesResponse> response = branches.stream().map(b -> GetAllBranchesResponse.builder()
+                .branchId(b.getId())
+                .branchName(b.getBranchName())
+                .overallRating(b.getOverallScore())
+                .merchantPlaceName(b.getMerchantPlace().getMerchantName())
+                .merchantPlaceId(b.getMerchantPlace().getId())
+                .address(b.getAddress())
+                .build()).toList();
+        return messageSingleton.ok(Map.of("branches", response));
     }
 
     public ResponseEntity<?> changeBranch(ChangeBranch changeBranch) {

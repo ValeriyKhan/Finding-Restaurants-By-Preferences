@@ -44,11 +44,6 @@ public class SecurityConfig {
                 .antMatchers(POST, "/**/merchant-place/**").hasAuthority("merchant:write")
                 .antMatchers(DELETE, "/**/merchant-place/**").hasAuthority("merchant:delete")
 
-                .antMatchers(GET, "/**/merchant-place/**").hasAuthority("merchant:read")
-                .antMatchers(PUT, "/**/merchant-place/**").hasAuthority("merchant:write")
-                .antMatchers(POST, "/**/merchant-place/**").hasAuthority("merchant:write")
-                .antMatchers(DELETE, "/**/merchant-place/**").hasAuthority("merchant:delete")
-
                 .antMatchers(GET, "/**/filial/**").hasAuthority("filial:read")
                 .antMatchers(PUT, "/**/filial/**").hasAuthority("filial:write")
                 .antMatchers(POST, "/**/filial/**").hasAuthority("filial:write")
@@ -57,6 +52,11 @@ public class SecurityConfig {
                 .antMatchers(POST, "/**/preference/**").hasAuthority("preference:write")
                 .antMatchers(GET, "/**/preference/**").hasAuthority("preference:read")
                 .antMatchers(DELETE, "/**/preference/**").hasAuthority("preference:delete")
+
+                .antMatchers(GET, "/**/rating/**").hasAuthority("rating:read")
+                .antMatchers(PUT, "/**/rating/**").hasAuthority("rating:write")
+                .antMatchers(POST, "/**/rating/**").hasAuthority("rating:write")
+                .antMatchers(DELETE, "/**/rating/**").hasAuthority("rating:delete")
 
                 .antMatchers(POST, "/**/lang-message/**").hasAuthority("langMessage:write")
                 .antMatchers(GET, "/**/lang-message/**").hasAuthority("langMessage:read")

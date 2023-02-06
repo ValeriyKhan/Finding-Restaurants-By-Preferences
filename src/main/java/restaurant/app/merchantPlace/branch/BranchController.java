@@ -43,12 +43,11 @@ public class BranchController {
     ) {
         return branchService.changeBranch(changeBranch);
     }
+
     @PostMapping("set-preferences")
     public ResponseEntity<?> setPreferencesToBranch(
             @RequestBody SetPreferencesToBranchRequest setPreferencesToBranchRequest
     ) {
         return branchService.setPreferencesToBranch(setPreferencesToBranchRequest);
     }
-
-
 }

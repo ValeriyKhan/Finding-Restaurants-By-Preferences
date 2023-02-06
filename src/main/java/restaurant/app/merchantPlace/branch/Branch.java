@@ -1,6 +1,8 @@
 package restaurant.app.merchantPlace.branch;
 
 import lombok.*;
+import org.springframework.context.annotation.Lazy;
+import restaurant.app.merchantPlace.MerchantPlace;
 import restaurant.app.preference.Preference;
 import restaurant.app.rating.Rating;
 import restaurant.app.user.User;
@@ -20,11 +22,11 @@ public class Branch {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    private Long overallScore;
+    private double overallScore;
     @Column(unique = true)
     private String branchName;
-    @OneToOne
-    private User branchOwner;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private MerchantPlace merchantPlace;
     @ManyToMany(fetch = FetchType.LAZY)
     private List<Preference> preferenceEntities;
     @ManyToMany(fetch = FetchType.LAZY)
